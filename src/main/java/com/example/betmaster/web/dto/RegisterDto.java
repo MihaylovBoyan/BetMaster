@@ -1,8 +1,10 @@
 package com.example.betmaster.web.dto;
 
+import jakarta.validation.constraints.Size;
+
 public class RegisterDto {
 
-
+    @Size(min = 4, max = 20, message = "Username must be between 4 and 20 symbols.")
     private String username;
 
     private String email;

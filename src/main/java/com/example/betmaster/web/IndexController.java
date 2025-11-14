@@ -1,9 +1,14 @@
 package com.example.betmaster.web;
 
 import com.example.betmaster.user.service.UserService;
+import com.example.betmaster.web.dto.RegisterDto;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 
 @Controller
@@ -17,14 +22,33 @@ public class IndexController {
 
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("title", "BetMaster - Sports Betting Home");
+
         return "index";
     }
 
+    @GetMapping("/login")
+    public String login(Model model) {
+
+        return "login";
+    }
+
     @GetMapping("/register")
-    public String register(Model model){
-        model.addAttribute("title", "Register - BetMaster");
+    public String registerForm(Model model){
+        model.addAttribute("registerDto", new RegisterDto());
         return "register";
+    }
+
+    @PostMapping("/register")
+    public String register(@Valid RegisterDto registerDto, BindingResult bindingResult, Model model){
+
+        if(bindingResult.hasErrors()){
+            return "register";
+        }
+
+        userService.registerUser(registerDto);
+
+
+        return "redirect:/login";
     }
 
 }
