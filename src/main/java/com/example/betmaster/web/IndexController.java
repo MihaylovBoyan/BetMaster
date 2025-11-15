@@ -20,10 +20,10 @@ public class IndexController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String home(Model model) {
 
-        return "index";
+        return "home";
     }
 
     @GetMapping("/login")
