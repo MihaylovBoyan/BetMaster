@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Basketball Odds</title>
+  <style>
+    body { font-family: sans-serif; background: #f8f8f8; margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; background: white; }
+    th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: left; }
+    th { background-color: #eee; }
+  </style>
+</head>
+<body>
+<h1>Basketball Odds</h1>
+<table>
+  <thead>
+  <tr>
+    <th>Match</th>
+    <th>Start Time</th>
+    <th>Bookmaker</th>
+    <th>Home Price</th>
+    <th>Away Price</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="event : ${events}">
+    <td th:text="${event.teams[0]} + ' vs ' + ${event.teams[1]}"></td>
+    <td th:text="${event.commence_time}"></td>
+    <td th:text="${event.bookmakers[0].title}"></td>
+    <td th:text="${event.bookmakers[0].markets[0].outcomes[0].price}"></td>
+    <td th:text="${event.bookmakers[0].markets[0].outcomes[1].price}"></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

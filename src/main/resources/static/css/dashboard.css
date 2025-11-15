@@ -1,0 +1,550 @@
+/* ===========================
+   Dashboard Layout
+   =========================== */
+.dashboard-main {
+    min-height: calc(100vh - 200px);
+    background-color: var(--darker-bg);
+    padding: 2rem 0;
+}
+
+/* Unauthorized Access Message */
+.unauthorized-message {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    max-width: 500px;
+    margin: 4rem auto;
+}
+
+.unauthorized-message h2 {
+    color: var(--danger-color);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.unauthorized-message p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 250px 1fr 320px;
+    gap: 1.5rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    height: calc(100vh - 200px);
+}
+
+/* ===========================
+   Sports Sidebar
+   =========================== */
+.sports-sidebar {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow-y: auto;
+    height: 100%;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    z-index: 10;
+}
+
+.sidebar-header h2 {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.sports-list {
+    padding: 0.5rem;
+}
+
+.sport-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-secondary);
+}
+
+.sport-item:hover {
+    background-color: var(--darker-bg);
+    color: var(--text-primary);
+}
+
+.sport-item.active {
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.sport-icon {
+    font-size: 1.3rem;
+}
+
+.sport-name {
+    font-size: 0.95rem;
+}
+
+/* ===========================
+   Events Section
+   =========================== */
+.events-section {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.events-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    z-index: 10;
+}
+
+.events-header h2 {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--darker-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.toggle-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.toggle-btn.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.events-container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.events-container.grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.event-card {
+    background-color: var(--darker-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.event-sport {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.event-date {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.event-teams {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.team-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-name {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.vs {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0.25rem 0;
+}
+
+.odds-btn {
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    min-width: 60px;
+}
+
+.odds-btn:hover {
+    background-color: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+.odds-btn.selected {
+    background-color: var(--success-color);
+}
+
+.odds-btn.small {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    min-width: auto;
+}
+
+.event-options {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ===========================
+   Bet Slip Sidebar
+   =========================== */
+.betslip-sidebar {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.betslip-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.betslip-header h2 {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.clear-betslip {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.clear-betslip:hover {
+    color: var(--danger-color);
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.betslip-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.betslip-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+}
+
+.betslip-empty p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.betslip-empty span {
+    font-size: 0.85rem;
+}
+
+.betslip-bets {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bet-item {
+    background-color: var(--darker-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    position: relative;
+}
+
+.bet-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+}
+
+.bet-item-info {
+    flex: 1;
+}
+
+.bet-selection {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.bet-event {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.remove-bet {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.remove-bet:hover {
+    color: var(--danger-color);
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.bet-odds {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.bet-odds-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.bet-odds-value {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.betslip-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--darker-bg);
+}
+
+.betslip-summary {
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.summary-row.total {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--success-color);
+}
+
+.stake-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.stake-input-wrapper input {
+    width: 100px;
+    padding: 0.5rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+.stake-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* ===========================
+   Responsive Design
+   =========================== */
+@media (max-width: 1400px) {
+    .dashboard-container {
+        grid-template-columns: 220px 1fr 300px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dashboard-container {
+        grid-template-columns: 200px 1fr 280px;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        height: auto;
+        min-height: calc(100vh - 200px);
+    }
+
+    .sports-sidebar {
+        height: auto;
+        max-height: 200px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .sports-list {
+        display: flex;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .sport-item {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .events-section {
+        height: auto;
+        min-height: 500px;
+    }
+
+    .betslip-sidebar {
+        height: auto;
+        max-height: 500px;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: 1000;
+        border-radius: 12px 12px 0 0;
+        display: none;
+    }
+
+    .betslip-sidebar.show {
+        display: flex;
+    }
+
+    .events-container.grid-view {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-main {
+        padding: 1rem 0;
+    }
+
+    .dashboard-container {
+        padding: 0 0.5rem;
+        gap: 1rem;
+    }
+
+    .events-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .event-card {
+        padding: 1rem;
+    }
+}
+
