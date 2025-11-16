@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - BetMaster</title>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon/favicon-16x16.png}">
+    <link rel="manifest" th:href="@{/favicon/site.webmanifest}">
+    <link rel="shortcut icon" th:href="@{/favicon/favicon.ico}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 </head>
@@ -22,6 +28,9 @@
                 <li><a th:href="@{/live}" class="nav-link">Live</a></li>
                 <li sec:authorize="isAuthenticated()">
                     <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}" class="nav-link">Profile</a>
                 </li>
                 <li sec:authorize="!isAuthenticated()">
                     <a th:href="@{/login}" class="nav-link">Login</a>
@@ -242,7 +251,7 @@
         </div>
     </main>
 
-    <!-- Unauthorized Access Message (hidden if authenticated) -->
+    <!-- Unauthorized Access Message -->
     <main sec:authorize="!isAuthenticated()" class="dashboard-main">
         <div class="container">
             <div class="unauthorized-message">
@@ -289,4 +298,3 @@
     <script th:src="@{/js/dashboard.js}"></script>
 </body>
 </html>
-

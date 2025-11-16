@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - BetMaster</title>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon/favicon-16x16.png}">
+    <link rel="manifest" th:href="@{/favicon/site.webmanifest}">
+    <link rel="shortcut icon" th:href="@{/favicon/favicon.ico}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/forms.css}">
 </head>
@@ -21,11 +27,14 @@
                 <li sec:authorize="isAuthenticated()">
                     <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
                 </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}" class="nav-link">Profile</a>
+                </li>
                 <li sec:authorize="!isAuthenticated()">
                     <a th:href="@{/login}" class="nav-link">Login</a>
                 </li>
                 <li sec:authorize="!isAuthenticated()">
-                    <a th:href="@{/register}" class="nav-link btn-register">Register</a>
+                    <a th:href="@{/register}" class="nav-link btn-register active">Register</a>
                 </li>
                 <li sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="post" style="display: inline;">
@@ -178,7 +187,7 @@
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/home}">Home</a></li>
                         <li><a th:href="@{/sports}">Sports</a></li>
                         <li><a th:href="@{/live}">Live Betting</a></li>
                     </ul>
@@ -203,4 +212,3 @@
     <script th:src="@{/js/register.js}"></script>
 </body>
 </html>
-

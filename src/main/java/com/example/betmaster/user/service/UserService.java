@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -53,5 +54,12 @@ public class UserService implements UserDetailsService {
         //TODO: FIX THIS EXCEPTION!
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Username not found!"));
         return new UserData(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
+    }
+
+    public User findById(UUID userId) {
+
+        //TODO FIX THIS exception
+       return userRepository.findById(userId).orElseThrow(RuntimeException::new);
+
     }
 }
