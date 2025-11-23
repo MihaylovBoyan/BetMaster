@@ -10,8 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+
 
 import java.util.UUID;
 
@@ -39,33 +38,17 @@ public class UserController {
         return "profile";
     }
 
-
-//    @PostMapping("/profile")
-//    public String updateProfile(@AuthenticationPrincipal UserData userData,
-//                                @ModelAttribute ProfileDto profileDto,
-//                                Model model) {
-//        if (userData == null) {
-//            return "redirect:/login";
-//        }
-//
-//        UUID userId = userData.getUserId();
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Update user information
-//        user.setFirstName(profileDto.getFirstName());
-//        user.setLastName(profileDto.getLastName());
-//        user.setEmail(profileDto.getEmail());
-//        user.setUpdatedOn(java.time.LocalDateTime.now());
-//
-//        userRepository.save(user);
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/admin")
+//    public String adminPanel(){
+//        return "admin";
+//    }
 //
 //        model.addAttribute("user", user);
 //        model.addAttribute("wallet", user.getWallet());
 //        model.addAttribute("success", "Profile updated successfully");
 //        model.addAttribute("profileDto", profileDto);
 //
-//        return "profile";
 //    }
 
 }
