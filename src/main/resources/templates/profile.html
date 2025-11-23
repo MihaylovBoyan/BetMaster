@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - BetMaster</title>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon/favicon-16x16.png}">
+    <link rel="manifest" th:href="@{/favicon/site.webmanifest}">
+    <link rel="shortcut icon" th:href="@{/favicon/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a th:href="@{/}" class="logo">BetMaster</a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/home}" class="nav-link">Home</a>
+                </li>
+                <li><a th:href="@{/sports}" class="nav-link">Sports</a></li>
+                <li><a th:href="@{/live}" class="nav-link">Live</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}" class="nav-link active">Profile</a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}" class="nav-link">Admin Panel</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="nav-link">Login</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/register}" class="nav-link btn-register">Register</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="nav-link btn-logout">Logout</button>
+                    </form>
+                </li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="profile-main" sec:authorize="isAuthenticated()">
+        <div class="container">
+            <div class="profile-container">
+                <!-- Success/Error Messages -->
+                <div th:if="${success}" class="alert alert-success" role="alert">
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}" class="alert alert-error" role="alert">
+                    <span th:text="${error}"></span>
+                </div>
+
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img th:if="${user.profilePicture != null}" th:src="${user.profilePicture}" alt="Profile Picture" id="profilePictureImg">
+                        <div th:unless="${user.profilePicture != null}" class="avatar-placeholder" id="avatarPlaceholder">
+                            <span th:text="${user.username != null ? user.username.substring(0, 1).toUpperCase() : 'U'}"></span>
+                        </div>
+                        <button class="avatar-edit-btn" id="editAvatarBtn" title="Change profile picture">
+                            <span>📷</span>
+                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <h1 class="profile-name">
+                            <span th:if="${user.firstName != null and user.lastName != null}">
+                                <span th:text="${user.firstName}"></span> <span th:text="${user.lastName}"></span>
+                            </span>
+                            <span th:unless="${user.firstName != null and user.lastName != null}" th:text="${user.username}"></span>
+                        </h1>
+                        <p class="profile-username" th:text="'@' + ${user.username}"></p>
+                        <p class="profile-role" th:text="${user.role}"></p>
+                    </div>
+                </div>
+
+                <!-- Wallet Section -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2>Wallet</h2>
+                    </div>
+                    <div class="wallet-card">
+                        <div class="wallet-balance">
+                            <span class="balance-label">Balance</span>
+                            <span class="balance-amount" th:text="${wallet != null and wallet.balance != null ? '$' + #numbers.formatDecimal(wallet.balance, 1, 2) : '$0.00'}">
+                                $0.00
+                            </span>
+                        </div>
+                        <div class="wallet-actions">
+                            <button class="btn btn-primary btn-sm" id="depositBtn">Deposit</button>
+                            <button class="btn btn-secondary btn-sm" id="withdrawBtn">Withdraw</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2>Account Information</h2>
+                        <button class="btn-edit" id="editInfoBtn">Edit</button>
+                    </div>
+                    <div class="info-card">
+                        <form id="profileForm" th:action="@{/profile}" th:object="${profileDto}" method="post">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" th:field="*{firstName}" class="form-input" th:value="${user.firstName}" readonly id="firstNameInput" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" th:field="*{lastName}" class="form-input" th:value="${user.lastName}" readonly id="lastNameInput" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-input" th:value="${user.username}" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" th:field="*{email}" class="form-input" th:value="${user.email}" readonly id="emailInput" />
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Member Since</label>
+                                    <input type="text" class="form-input" 
+                                           th:value="${user.registeredOn != null ? #temporals.format(user.registeredOn, 'dd MMMM yyyy') : 'N/A'}" 
+                                           readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Updated</label>
+                                    <input type="text" class="form-input" 
+                                           th:value="${user.updatedOn != null ? #temporals.format(user.updatedOn, 'dd MMMM yyyy') : 'N/A'}" 
+                                           readonly />
+                                </div>
+                            </div>
+                            <div class="form-actions" id="formActions" style="display: none;">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2>Statistics</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <span class="stat-value" th:text="${wallet != null and wallet.balance != null ? '$' + #numbers.formatDecimal(wallet.balance, 1, 2) : '$0.00'}">$0.00</span>
+                                <span class="stat-label">Total Balance</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎲</div>
+                            <div class="stat-info">
+                                <span class="stat-value" th:text="${user.bets != null ? user.bets.size() : 0}">0</span>
+                                <span class="stat-label">Total Bets</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-info">
+                                <span class="stat-value" th:text="${user.registeredOn != null ? #temporals.format(user.registeredOn, 'MMM yyyy') : 'N/A'}">N/A</span>
+                                <span class="stat-label">Member Since</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">👤</div>
+                            <div class="stat-info">
+                                <span class="stat-value" th:text="${user.role}">USER</span>
+                                <span class="stat-label">Account Type</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Change Password Section -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h2>Change Password</h2>
+                    </div>
+                    <div class="info-card">
+                        <form id="passwordForm" th:action="@{/profile/password}" method="post">
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" name="currentPassword" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <input type="password" name="newPassword" class="form-input" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <input type="password" name="confirmPassword" class="form-input" required />
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Unauthorized Access Message -->
+    <main sec:authorize="!isAuthenticated()" class="profile-main">
+        <div class="container">
+            <div class="unauthorized-message">
+                <h2>Access Denied</h2>
+                <p>You must be logged in to access your profile.</p>
+                <a th:href="@{/login}" class="btn btn-primary">Go to Login</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BetMaster</h3>
+                    <p>Your trusted sports betting platform</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a th:href="@{/home}">Home</a></li>
+                        <li><a th:href="@{/sports}">Sports</a></li>
+                        <li><a th:href="@{/live}">Live Betting</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BetMaster. All rights reserved. | 18+ | Please gamble responsibly</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/profile.js}"></script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - BetMaster</title>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon/favicon-16x16.png}">
+    <link rel="manifest" th:href="@{/favicon/site.webmanifest}">
+    <link rel="shortcut icon" th:href="@{/favicon/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a th:href="@{/}" class="logo">BetMaster</a>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/home}" class="nav-link">Home</a>
+                </li>
+                <li><a th:href="@{/sports}" class="nav-link">Sports</a></li>
+                <li><a th:href="@{/live}" class="nav-link">Live</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}" class="nav-link">Profile</a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}" class="nav-link active">Admin Panel</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="nav-link">Login</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/register}" class="nav-link btn-register">Register</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="nav-link btn-logout">Logout</button>
+                    </form>
+                </li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-main" sec:authorize="hasRole('ADMIN')">
+        <div class="container">
+            <div class="admin-header">
+                <h1>Admin Panel</h1>
+                <p>Manage users, bets, and system settings</p>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success" role="alert">
+                <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-error" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <span class="stat-value" th:text="${totalUsers != null ? totalUsers : 0}">0</span>
+                        <span class="stat-label">Total Users</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎲</div>
+                    <div class="stat-info">
+                        <span class="stat-value" th:text="${totalBets != null ? totalBets : 0}">0</span>
+                        <span class="stat-label">Total Bets</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <span class="stat-value" th:text="${totalRevenue != null ? '$' + #numbers.formatDecimal(totalRevenue, 1, 2) : '$0.00'}">$0.00</span>
+                        <span class="stat-label">Total Revenue</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info">
+                        <span class="stat-value" th:text="${activeUsers != null ? activeUsers : 0}">0</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="users">Users</button>
+                <button class="tab-btn" data-tab="bets">Bets</button>
+                <button class="tab-btn" data-tab="transactions">Transactions</button>
+                <button class="tab-btn" data-tab="settings">Settings</button>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="tab-content active" id="usersTab">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>User Management</h2>
+                        <button class="btn btn-primary btn-sm" id="refreshUsersBtn">Refresh</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Registered</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${users != null and !users.isEmpty()}" th:each="user : ${users}">
+                                    <td th:text="${user.id}">-</td>
+                                    <td th:text="${user.username}">-</td>
+                                    <td th:text="${user.email}">-</td>
+                                    <td>
+                                        <span class="role-badge" th:classappend="${user.role == T(com.example.betmaster.user.model.UserRole).ADMIN} ? 'role-admin' : 'role-user'"
+                                              th:text="${user.role}">USER</span>
+                                    </td>
+                                    <td th:text="${user.registeredOn != null ? #temporals.format(user.registeredOn, 'dd MMM yyyy') : 'N/A'}">N/A</td>
+                                    <td>
+                                        <span class="status-badge status-active">Active</span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+<!--                                            <button class="btn-icon" th:onclick="'viewUser(\'' + ${user.id} + '\')'" title="View">👁️</button>-->
+<!--                                            <button class="btn-icon" th:onclick="'editUser(\'' + ${user.id} + '\')'" title="Edit">✏️</button>-->
+<!--                                            <button class="btn-icon btn-danger" th:onclick="'deleteUser(\'' + ${user.id} + '\')'" title="Delete">🗑️</button>-->
+                                            <button class="btn-icon" data-id="${user.id}" onclick="viewUser(this.dataset.id)">👁️</button>
+                                            <button class="btn-icon" data-id="${user.id}" onclick="editUser(this.dataset.id)">✏️</button>
+                                            <button class="btn-icon btn-danger" data-id="${user.id}" onclick="deleteUser(this.dataset.id)">🗑️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${users == null or users.isEmpty()}">
+                                    <td colspan="7" class="empty-message">No users found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bets Tab -->
+            <div class="tab-content" id="betsTab">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Bet Management</h2>
+                        <button class="btn btn-primary btn-sm" id="refreshBetsBtn">Refresh</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Event</th>
+                                    <th>Selection</th>
+                                    <th>Odds</th>
+                                    <th>Stake</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${bets != null and !bets.isEmpty()}" th:each="bet : ${bets}">
+                                    <td th:text="${bet.id}">-</td>
+                                    <td th:text="${bet.user != null ? bet.user.username : 'N/A'}">-</td>
+                                    <td>Event Name</td>
+                                    <td>Selection</td>
+                                    <td th:text="${bet.odds != null ? bet.odds : 'N/A'}">-</td>
+                                    <td th:text="${bet.stake != null ? '$' + #numbers.formatDecimal(bet.stake, 1, 2) : '$0.00'}">$0.00</td>
+                                    <td>
+                                        <span class="status-badge" th:classappend="${bet.status != null ? 'status-' + bet.status.name().toLowerCase() : 'status-pending'}"
+                                              th:text="${bet.status != null ? bet.status : 'PENDING'}">PENDING</span>
+                                    </td>
+                                    <td th:text="${bet.placedOn != null ? #temporals.format(bet.placedOn, 'dd MMM yyyy HH:mm') : 'N/A'}">N/A</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-icon" title="View">👁️</button>
+                                            <button class="btn-icon btn-danger" title="Cancel">❌</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${bets == null or bets.isEmpty()}">
+                                    <td colspan="9" class="empty-message">No bets found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div class="tab-content" id="transactionsTab">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Transaction Management</h2>
+                        <button class="btn btn-primary btn-sm" id="refreshTransactionsBtn">Refresh</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${transactions != null and !transactions.isEmpty()}" th:each="transaction : ${transactions}">
+                                    <td th:text="${transaction.id}">-</td>
+                                    <td th:text="${transaction.user != null ? transaction.user.username : 'N/A'}">-</td>
+                                    <td>
+                                        <span class="type-badge" th:classappend="${transaction.type != null ? 'type-' + transaction.type.name().toLowerCase() : ''}"
+                                              th:text="${transaction.type != null ? transaction.type : 'N/A'}">N/A</span>
+                                    </td>
+                                    <td th:text="${transaction.description != null ? transaction.description : 'N/A'}">N/A</td>
+                                    <td>
+                                        <span class="status-badge" th:classappend="${transaction.status != null ? 'status-' + transaction.status.name().toLowerCase() : 'status-pending'}"
+                                              th:text="${transaction.status != null ? transaction.status : 'PENDING'}">PENDING</span>
+                                    </td>
+                                    <td th:text="${transaction.createdOn != null ? #temporals.format(transaction.createdOn, 'dd MMM yyyy HH:mm') : 'N/A'}">N/A</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn-icon" title="View">👁️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${transactions == null or transactions.isEmpty()}">
+                                    <td colspan="7" class="empty-message">No transactions found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settingsTab">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>System Settings</h2>
+                    </div>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <h3>General Settings</h3>
+                            <div class="setting-item">
+                                <label>Site Name</label>
+                                <input type="text" class="form-input" value="BetMaster" />
+                            </div>
+                            <div class="setting-item">
+                                <label>Maintenance Mode</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <button class="btn btn-primary">Save Settings</button>
+                        </div>
+                        <div class="setting-card">
+                            <h3>Betting Settings</h3>
+                            <div class="setting-item">
+                                <label>Minimum Stake</label>
+                                <input type="number" class="form-input" value="1.00" step="0.01" />
+                            </div>
+                            <div class="setting-item">
+                                <label>Maximum Stake</label>
+                                <input type="number" class="form-input" value="10000.00" step="0.01" />
+                            </div>
+                            <button class="btn btn-primary">Save Settings</button>
+                        </div>
+                        <div class="setting-card">
+                            <h3>User Management</h3>
+                            <div class="setting-item">
+                                <label>Allow New Registrations</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>Require Email Verification</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <button class="btn btn-primary">Save Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Unauthorized Access Message -->
+    <main sec:authorize="!hasRole('ADMIN')" class="admin-main">
+        <div class="container">
+            <div class="unauthorized-message">
+                <h2>Access Denied</h2>
+                <p>You must be an administrator to access this page.</p>
+                <a th:href="@{/home}" class="btn btn-primary">Go to Home</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BetMaster</h3>
+                    <p>Your trusted sports betting platform</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a th:href="@{/home}">Home</a></li>
+                        <li><a th:href="@{/sports}">Sports</a></li>
+                        <li><a th:href="@{/live}">Live Betting</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BetMaster. All rights reserved. | 18+ | Please gamble responsibly</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/admin.js}"></script>
+</body>
+</html>
+
